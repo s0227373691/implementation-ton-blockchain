@@ -36,7 +36,17 @@ function App() {
       </div>
       <div>
         <button onClick={fetchTransactions}>fetch Transactions</button>
-        {/* {history && <span>Transactions: {history}</span>} */}
+        {history && (
+          <>
+            <p>Transactions: </p>
+            <ul>
+              {history.map((el) => (
+                <li key={el.data}>{JSON.stringify(el)}</li>
+              ))}
+              <li></li>
+            </ul>
+          </>
+        )}
       </div>
     </>
   );
