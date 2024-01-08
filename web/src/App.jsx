@@ -1,44 +1,43 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 
-import tonClient from "./tonClient";
-
-const main = async () => {
-  const balance = await tonClient.mainnet.getBalance(
-    "EQCE0HgxgTE-GGP750FiitKIzuQKdbG9zOxVgy0kUNqgVQNI"
-  );
-  console.log(balance);
-};
-
-main();
+import useTon, { network } from "./hooks/useTon";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const tonClient = useTon(network.MAINNET);
+  const exAddr = "EQCE0HgxgTE-GGP750FiitKIzuQKdbG9zOxVgy0kUNqgVQNI";
+  const [addr, setAddr] = useState(exAddr);
+  const [balance, setBalance] = useState(null);
+  const [history, setHistory] = useState(null);
 
+  const fetchBalance = async () => {
+    const _balance = await tonClient.getBalance(addr);
+    setBalance(_balance);
+  };
+
+  const fetchTransactions = async () => {
+    const _history = await tonClient.getTransactions(addr);
+    setHistory(_history);
+    console.log(_history);
+  };
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <input
+          type="search"
+          style={{ width: "500px" }}
+          value={addr}
+          onChange={(e) => setAddr(e.target.value)}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div>
+        <button onClick={fetchBalance}>fetch balance</button>
+        {balance && <span>Balance: {balance}</span>}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <div>
+        <button onClick={fetchTransactions}>fetch Transactions</button>
+        {/* {history && <span>Transactions: {history}</span>} */}
+      </div>
     </>
   );
 }
